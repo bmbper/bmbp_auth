@@ -1,5 +1,27 @@
-pub struct BmbpAuthErr {}
+use bmbp_marco_bean::bean;
+use serde::{Deserialize, Serialize};
 
-pub enum BmbpAuthErrType {}
+#[bean]
+pub struct BmbpAuthErr {
+    pub(crate) code: Option<String>,
+    pub(crate) msg: Option<String>,
+    pub(crate) kind: BmbpAuthErrType,
+}
 
-type BmbpAuthResp = Result<T, BmbpAuthErr>;
+impl BmbpAuthErr {
+    pub fn build(kind: BmbpAuthErrType, code: String, msg: String) -> Self {
+        BmbpAuthErr {
+            code: Some(code),
+            msg: Some(msg),
+            kind,
+        }
+    }
+}
+
+#[derive(Debug,Default,Clone,Serialize,Deserialize)]
+pub enum BmbpAuthErrType {
+    #[default]
+    NotFoundImpl
+}
+
+pub type BmbpAuthResp<T> = Result<T, BmbpAuthErr>;
