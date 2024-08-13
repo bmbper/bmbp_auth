@@ -1,7 +1,5 @@
 use async_trait::async_trait;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use bmbp_auth::{BMBP_AUTH_USER_CACHE, BmbpApp, BmbpAuthResp, BmbpAuthUser, BmbpAuthUserUtil, BmbpAuthUtil, BmbpMenu, BmbpOrgan, BmbpRole, BmbpUser, DEMO};
-
+use bmbp_auth::{BmbpApp, BmbpAuthResp, BmbpAuthUser, BmbpAuthUserUtil,BmbpMenu, BmbpOrgan, BmbpRole, BmbpUser, register_bmbp_auth_user};
 #[test]
 fn test_user() {
     let user = BmbpUser::default();
@@ -14,7 +12,9 @@ async fn test_bmbp_auth_user() {
     #[async_trait]
     impl BmbpAuthUser for BmbpAuthUserImpl {
         async fn get_current_info(&self) -> BmbpAuthResp<Option<BmbpUser>> {
-            Ok(Some(BmbpUser::new()))
+            let mut  user = BmbpUser::new();
+            user.set_name(Some("a".to_string()));
+            Ok(Some(user))
         }
 
         async fn get_current_organ(&self) -> BmbpAuthResp<Option<BmbpOrgan>> {
@@ -38,10 +38,12 @@ async fn test_bmbp_auth_user() {
         }
     }
 
-    let a1: Box<dyn BmbpAuthUser> = Box::new(BmbpAuthUserImpl {});
-    (&*BMBP_AUTH_USER_CACHE).write().unwrap().register_auth(a1);
-    let a2 = (&BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref();
+    let test_impl: Box<dyn BmbpAuthUser> = Box::new(BmbpAuthUserImpl {});
+    register_bmbp_auth_user(test_impl);
 
-    let user = BmbpAuthUserUtil::get_current_info().await.unwrap();
-    assert_eq!(user.is_some(), true);
+    if let Some(user) = BmbpAuthUserUtil::get_current_info().await.unwrap() {
+        assert_eq!(user.get_name().is_some(), true);
+    } else {
+        assert!(false, "获取用户信息失败")
+    }
 }

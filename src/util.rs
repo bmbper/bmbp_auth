@@ -1,6 +1,6 @@
 use std::sync::Arc;
-use async_trait::async_trait;
-use crate::{BMBP_AUTH_CACHE, BMBP_AUTH_USER_CACHE, BmbpApp, BmbpAuth, BmbpAuthErr, BmbpAuthErrType, BmbpAuthResp, BmbpAuthUser, BmbpMenu, BmbpOrgan, BmbpRole, BmbpUser};
+use crate::{BMBP_AUTH_CACHE, BMBP_AUTH_USER_CACHE, BmbpApp, BmbpAuth, BmbpAuthErr, BmbpAuthErrType, BmbpAuthResp, BmbpAuthToken, BmbpAuthUser, BmbpMenu, BmbpOrgan, BmbpRole, BmbpToken, BmbpUser};
+use crate::cache::BMBP_AUTH_TOKEN_CACHE;
 
 pub struct BmbpAuthUtil;
 
@@ -11,7 +11,7 @@ pub struct BmbpAuthUserUtil;
 impl BmbpAuthUtil {
     fn get_auth() -> BmbpAuthResp<Arc<Box<dyn BmbpAuth>>> {
         return if (*BMBP_AUTH_CACHE).read().unwrap().is_none() {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
+            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "BmbpAuth未找到认证服务实现".to_string()))
         } else {
             Ok(BMBP_AUTH_CACHE.read().unwrap().as_ref().unwrap().clone())
         };
@@ -178,53 +178,63 @@ impl BmbpAuthUtil {
     }
 }
 
-
-impl BmbpAuthTokenUtil {}
-
+impl BmbpAuthTokenUtil {
+    fn get_auth() -> BmbpAuthResp<Arc<Box<dyn BmbpAuthToken>>> {
+        return if (*BMBP_AUTH_TOKEN_CACHE).read().unwrap().is_none() {
+            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9002".to_string(), "BmbpAuthToken未找到认证服务实现".to_string()))
+        } else {
+            Ok(BMBP_AUTH_TOKEN_CACHE.read().unwrap().as_ref().unwrap().clone())
+        };
+    }
+    async fn create_token(username: String, password: String) -> BmbpAuthResp<Option<BmbpToken>> {
+        BmbpAuthTokenUtil::get_auth()?.create_token(username, password).await
+    }
+    async fn check_token(token: String) -> BmbpAuthResp<Option<bool>> {
+        BmbpAuthTokenUtil::get_auth()?.check_token(token).await
+    }
+    async fn refresh_token(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
+        BmbpAuthTokenUtil::get_auth()?.refresh_token(token).await
+    }
+    async fn invalid_token(token: String) -> BmbpAuthResp<Option<bool>> {
+        BmbpAuthTokenUtil::get_auth()?.invalid_token(token).await
+    }
+    async fn remove_token(token: String) -> BmbpAuthResp<Option<bool>> {
+        BmbpAuthTokenUtil::get_auth()?.remove_token(token).await
+    }
+    async fn get_token_info(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
+        BmbpAuthTokenUtil::get_auth()?.get_token_info(token).await
+    }
+    async fn get_token_user(token: String) -> BmbpAuthResp<Option<BmbpUser>> {
+        BmbpAuthTokenUtil::get_auth()?.get_token_user(token).await
+    }
+}
 
 impl BmbpAuthUserUtil {
-    pub async fn get_current_info() -> BmbpAuthResp<Option<BmbpUser>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_info().await
+    fn get_auth() -> BmbpAuthResp<Arc<Box<dyn BmbpAuthUser>>> {
+        return if (*BMBP_AUTH_USER_CACHE).read().unwrap().is_none() {
+            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9003".to_string(), "BmbpAuthUser未找到认证服务实现".to_string()))
         } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+            Ok((&*BMBP_AUTH_USER_CACHE).read().unwrap().as_ref().unwrap().clone())
+        };
+    }
+    pub async fn get_current_info() -> BmbpAuthResp<Option<BmbpUser>> {
+        BmbpAuthUserUtil::get_auth()?.get_current_info().await
     }
     pub async fn get_current_organ() -> BmbpAuthResp<Option<BmbpOrgan>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_organ().await
-        } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+        BmbpAuthUserUtil::get_auth()?.get_current_organ().await
     }
     pub async fn get_current_apps() -> BmbpAuthResp<Option<Vec<BmbpApp>>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_apps().await
-        } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+        BmbpAuthUserUtil::get_auth()?.get_current_apps().await
     }
     pub async fn get_current_menus() -> BmbpAuthResp<Option<Vec<BmbpMenu>>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_menus().await
-        } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+        BmbpAuthUserUtil::get_auth()?.get_current_menus().await
     }
 
     pub async fn get_current_res_roles() -> BmbpAuthResp<Option<Vec<BmbpRole>>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_res_roles().await
-        } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+        BmbpAuthUserUtil::get_auth()?.get_current_res_roles().await
     }
 
     pub async fn get_current_data_roles() -> BmbpAuthResp<Option<Vec<BmbpRole>>> {
-        if let Some(auth) = (*BMBP_AUTH_USER_CACHE).read().unwrap().cache.as_ref() {
-            auth.get_current_data_roles().await
-        } else {
-            Err(BmbpAuthErr::build(BmbpAuthErrType::NotFoundImpl, "9001".to_string(), "未找到认证服务实现".to_string()))
-        }
+        BmbpAuthUserUtil::get_auth()?.get_current_data_roles().await
     }
 }

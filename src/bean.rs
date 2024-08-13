@@ -90,7 +90,7 @@ pub struct BmbpToken {
 }
 
 #[async_trait]
-pub trait BmbpAuthUser {
+pub trait BmbpAuthUser: Sync + Send {
     async fn get_current_info(&self) -> BmbpAuthResp<Option<BmbpUser>>;
     async fn get_current_organ(&self) -> BmbpAuthResp<Option<BmbpOrgan>>;
     async fn get_current_apps(&self) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
@@ -98,9 +98,8 @@ pub trait BmbpAuthUser {
     async fn get_current_res_roles(&self) -> BmbpAuthResp<Option<Vec<BmbpRole>>>;
     async fn get_current_data_roles(&self) -> BmbpAuthResp<Option<Vec<BmbpRole>>>;
 }
-
 #[async_trait]
-pub trait BmbpAuthToken {
+pub trait BmbpAuthToken: Sync + Send{
     async fn create_token(&self, username: String, password: String) -> BmbpAuthResp<Option<BmbpToken>>;
     async fn check_token(&self, token: String) -> BmbpAuthResp<Option<bool>>;
     async fn refresh_token(&self, token: String) -> BmbpAuthResp<Option<BmbpToken>>;
@@ -109,9 +108,8 @@ pub trait BmbpAuthToken {
     async fn get_token_info(&self, token: String) -> BmbpAuthResp<Option<BmbpToken>>;
     async fn get_token_user(&self, token: String) -> BmbpAuthResp<Option<BmbpUser>>;
 }
-
 #[async_trait]
-pub trait BmbpAuth {
+pub trait BmbpAuth :Sync + Send{
     async fn get_user_by_id(&self, id: String) -> BmbpAuthResp<Option<BmbpUser>>;
     async fn get_user_by_name(&self, name: String) -> BmbpAuthResp<Option<BmbpUser>>;
     async fn get_user_by_mobile(&self, mobile: String) -> BmbpAuthResp<Option<BmbpUser>>;
