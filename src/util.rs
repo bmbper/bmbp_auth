@@ -186,25 +186,25 @@ impl BmbpAuthTokenUtil {
             Ok(BMBP_AUTH_TOKEN_CACHE.read().unwrap().as_ref().unwrap().clone())
         };
     }
-    async fn create_token(username: String, password: String) -> BmbpAuthResp<Option<BmbpToken>> {
+    pub async fn create_token(username: String, password: String) -> BmbpAuthResp<Option<BmbpToken>> {
         BmbpAuthTokenUtil::get_auth()?.create_token(username, password).await
     }
-    async fn check_token(token: String) -> BmbpAuthResp<Option<bool>> {
+    pub async fn check_token(token: String) -> BmbpAuthResp<Option<bool>> {
         BmbpAuthTokenUtil::get_auth()?.check_token(token).await
     }
-    async fn refresh_token(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
+    pub async fn refresh_token(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
         BmbpAuthTokenUtil::get_auth()?.refresh_token(token).await
     }
-    async fn invalid_token(token: String) -> BmbpAuthResp<Option<bool>> {
+    pub async fn invalid_token(token: String) -> BmbpAuthResp<Option<bool>> {
         BmbpAuthTokenUtil::get_auth()?.invalid_token(token).await
     }
-    async fn remove_token(token: String) -> BmbpAuthResp<Option<bool>> {
+    pub async fn remove_token(token: String) -> BmbpAuthResp<Option<bool>> {
         BmbpAuthTokenUtil::get_auth()?.remove_token(token).await
     }
-    async fn get_token_info(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
+    pub async fn get_token_info(token: String) -> BmbpAuthResp<Option<BmbpToken>> {
         BmbpAuthTokenUtil::get_auth()?.get_token_info(token).await
     }
-    async fn get_token_user(token: String) -> BmbpAuthResp<Option<BmbpUser>> {
+    pub async fn get_token_user(token: String) -> BmbpAuthResp<Option<BmbpUser>> {
         BmbpAuthTokenUtil::get_auth()?.get_token_user(token).await
     }
 }
