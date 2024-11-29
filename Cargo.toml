@@ -11,7 +11,7 @@ repository = "https://github.com/bmbper/bmbp_auth"
 documentation = "https://github.com/bmbper/bmbp_auth"
 [dependencies]
 bmbp_bean = { workspace = true }
-serde = { version = "1.0.215", features = ["derive"] }
-salvo = { version = "0.74.2" }
+serde = { workspace = true }
+salvo = { workspace = true }
 async-trait = "0.1.83"
 uuid = { version = "1.11.0", features = ["v4"] }
