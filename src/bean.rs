@@ -1,5 +1,5 @@
+use crate::BmbpAuthResp;
 use async_trait::async_trait;
-use bmbp_bean::BmbpResp;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -133,90 +133,100 @@ pub struct BmbpToken {
 }
 #[async_trait]
 pub trait BmbpAuthUser: Sync + Send {
-    async fn get_current_info(&self) -> BmbpResp<Option<BmbpUser>>;
-    async fn get_current_organ(&self) -> BmbpResp<Option<BmbpOrgan>>;
-    async fn get_current_apps(&self) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_current_menus(&self) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_current_res_roles(&self) -> BmbpResp<Option<Vec<BmbpRole>>>;
-    async fn get_current_data_roles(&self) -> BmbpResp<Option<Vec<BmbpRole>>>;
+    async fn get_current_info(&self) -> BmbpAuthResp<Option<BmbpUser>>;
+    async fn get_current_organ(&self) -> BmbpAuthResp<Option<BmbpOrgan>>;
+    async fn get_current_apps(&self) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_current_menus(&self) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_current_res_roles(&self) -> BmbpAuthResp<Option<Vec<BmbpRole>>>;
+    async fn get_current_data_roles(&self) -> BmbpAuthResp<Option<Vec<BmbpRole>>>;
 }
 #[async_trait]
 pub trait BmbpAuthToken: Sync + Send {
-    async fn create_token(&self, username: String, password: String)
-        -> BmbpResp<Option<BmbpToken>>;
-    async fn check_token(&self, token: String) -> BmbpResp<Option<bool>>;
-    async fn refresh_token(&self, token: String) -> BmbpResp<Option<BmbpToken>>;
-    async fn invalid_token(&self, token: String) -> BmbpResp<Option<bool>>;
-    async fn remove_token(&self, token: String) -> BmbpResp<Option<bool>>;
-    async fn get_token_info(&self, token: String) -> BmbpResp<Option<BmbpToken>>;
-    async fn get_token_user(&self, token: String) -> BmbpResp<Option<BmbpUser>>;
+    async fn create_token(
+        &self,
+        username: String,
+        password: String,
+    ) -> BmbpAuthResp<Option<BmbpToken>>;
+    async fn check_token(&self, token: String) -> BmbpAuthResp<Option<bool>>;
+    async fn refresh_token(&self, token: String) -> BmbpAuthResp<Option<BmbpToken>>;
+    async fn invalid_token(&self, token: String) -> BmbpAuthResp<Option<bool>>;
+    async fn remove_token(&self, token: String) -> BmbpAuthResp<Option<bool>>;
+    async fn get_token_info(&self, token: String) -> BmbpAuthResp<Option<BmbpToken>>;
+    async fn get_token_user(&self, token: String) -> BmbpAuthResp<Option<BmbpUser>>;
 }
 #[async_trait]
 pub trait BmbpAuthRbac: Sync + Send {
-    async fn get_user_by_id(&self, id: String) -> BmbpResp<Option<BmbpUser>>;
-    async fn get_user_by_name(&self, name: String) -> BmbpResp<Option<BmbpUser>>;
-    async fn get_user_by_mobile(&self, mobile: String) -> BmbpResp<Option<BmbpUser>>;
-    async fn get_users_by_organ_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpUser>>>;
-    async fn get_users_by_res_role_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpUser>>>;
-    async fn get_users_by_data_role_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpUser>>>;
-    async fn get_organ_organ_by_id(&self, id: String) -> BmbpResp<Option<BmbpOrgan>>;
-    async fn get_organ_organ_by_code(&self, code: String) -> BmbpResp<Option<BmbpOrgan>>;
-    async fn get_organ_organ_by_path(&self, path: String) -> BmbpResp<Option<BmbpOrgan>>;
+    async fn get_user_by_id(&self, id: String) -> BmbpAuthResp<Option<BmbpUser>>;
+    async fn get_user_by_name(&self, name: String) -> BmbpAuthResp<Option<BmbpUser>>;
+    async fn get_user_by_mobile(&self, mobile: String) -> BmbpAuthResp<Option<BmbpUser>>;
+    async fn get_users_by_organ_code(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpUser>>>;
+    async fn get_users_by_res_role_code(&self, code: String)
+        -> BmbpAuthResp<Option<Vec<BmbpUser>>>;
+    async fn get_users_by_data_role_code(
+        &self,
+        code: String,
+    ) -> BmbpAuthResp<Option<Vec<BmbpUser>>>;
+    async fn get_organ_organ_by_id(&self, id: String) -> BmbpAuthResp<Option<BmbpOrgan>>;
+    async fn get_organ_organ_by_code(&self, code: String) -> BmbpAuthResp<Option<BmbpOrgan>>;
+    async fn get_organ_organ_by_path(&self, path: String) -> BmbpAuthResp<Option<BmbpOrgan>>;
     async fn get_organ_organs_by_parent_code(
         &self,
         code: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organs_by_parent_path(
         &self,
         path: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
-    async fn get_organ_organs_by_role_code(&self, code: String)
-        -> BmbpResp<Option<Vec<BmbpOrgan>>>;
-    async fn get_organ_organ_tree(&self) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
+    async fn get_organ_organs_by_role_code(
+        &self,
+        code: String,
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
+    async fn get_organ_organ_tree(&self) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_id(
         &self,
         id: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_code(
         &self,
         code: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_path(
         &self,
         path: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_parent_id(
         &self,
         id: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_parent_code(
         &self,
         code: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
     async fn get_organ_organ_tree_by_start_parent_path(
         &self,
         path: String,
-    ) -> BmbpResp<Option<Vec<BmbpOrgan>>>;
+    ) -> BmbpAuthResp<Option<Vec<BmbpOrgan>>>;
 
-    async fn get_app_by_id(&self, id: String) -> BmbpResp<Option<BmbpApp>>;
-    async fn get_app_by_code(&self, code: String) -> BmbpResp<Option<BmbpApp>>;
-    async fn get_apps_by_user_id(&self, id: String) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_apps_by_user_name(&self, name: String) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_apps_by_user_mobile(&self, mobile: String) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_apps_by_role_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_apps_by_role_codes(&self, code: &[String]) -> BmbpResp<Option<Vec<BmbpApp>>>;
-    async fn get_menu_by_id(&self, id: String) -> BmbpResp<Option<BmbpMenu>>;
-    async fn get_menu_by_code(&self, code: String) -> BmbpResp<Option<BmbpMenu>>;
-    async fn get_menu_by_path(&self, path: String) -> BmbpResp<Option<BmbpMenu>>;
-    async fn get_menus_by_app_id(&self, id: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_app_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_app_ids(&self, id: &[String]) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_app_codes(&self, code: &[String]) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_user_id(&self, id: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_user_name(&self, code: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_user_mobile(&self, code: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_role_id(&self, id: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_role_code(&self, code: String) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_role_ids(&self, id: &[String]) -> BmbpResp<Option<Vec<BmbpMenu>>>;
-    async fn get_menus_by_role_codes(&self, code: &[String]) -> BmbpResp<Option<Vec<BmbpMenu>>>;
+    async fn get_app_by_id(&self, id: String) -> BmbpAuthResp<Option<BmbpApp>>;
+    async fn get_app_by_code(&self, code: String) -> BmbpAuthResp<Option<BmbpApp>>;
+    async fn get_apps_by_user_id(&self, id: String) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_apps_by_user_name(&self, name: String) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_apps_by_user_mobile(&self, mobile: String) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_apps_by_role_code(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_apps_by_role_codes(&self, code: &[String]) -> BmbpAuthResp<Option<Vec<BmbpApp>>>;
+    async fn get_menu_by_id(&self, id: String) -> BmbpAuthResp<Option<BmbpMenu>>;
+    async fn get_menu_by_code(&self, code: String) -> BmbpAuthResp<Option<BmbpMenu>>;
+    async fn get_menu_by_path(&self, path: String) -> BmbpAuthResp<Option<BmbpMenu>>;
+    async fn get_menus_by_app_id(&self, id: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_app_code(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_app_ids(&self, id: &[String]) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_app_codes(&self, code: &[String]) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_user_id(&self, id: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_user_name(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_user_mobile(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_role_id(&self, id: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_role_code(&self, code: String) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_role_ids(&self, id: &[String]) -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
+    async fn get_menus_by_role_codes(&self, code: &[String])
+        -> BmbpAuthResp<Option<Vec<BmbpMenu>>>;
 }
